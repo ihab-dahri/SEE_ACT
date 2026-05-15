@@ -4,8 +4,10 @@ plugins {
 }
 
 android {
+
     buildFeatures {
         viewBinding = true
+        mlModelBinding = true
     }
     namespace = "com.example.projet_m1"
     compileSdk {
@@ -38,7 +40,13 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-}
+
+
+        aaptOptions {
+            noCompress("tflite")
+        }
+    }
+
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -46,6 +54,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.tensorflow.lite.metadata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -59,4 +68,9 @@ dependencies {
     // TensorFlow Lite (L'IA de Google pour mobile)
     implementation("org.tensorflow:tensorflow-lite:2.14.0")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
+    val nav_version = "2.7.7" // Utilise la version la plus récente
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("com.google.android.material:material:1.11.0") // Pour le joli menu du bas
+    implementation("org.tensorflow:tensorflow-lite-metadata:0.4.4")
 }
