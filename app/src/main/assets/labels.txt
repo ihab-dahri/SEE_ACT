@@ -1,41 +1,64 @@
-0
-1
-10
-11
-12
-13
+20 limit
+crosswalk sign
+120KPH
 14
-15
-16
-17
-18
-19
-2
-20
-21
-22
-23
-24
-25
-30
-50
-80
-120
 3
-30
-31
-32
-33
-34
-35
-4
-5
-6
 7
 8
-9
-crosswalk
+80KPH
+Danger Ahead
+End of Right Road -Go straight-
+Give Way
+Left Sharp Curve
+No Stopping
+No Waiting
+Snow Warning Sign
+Speed Limit 120
+Speed Limit 30
+Traffic Signals Ahead
+danger
+do_not_enter
+do_not_u_turn
+green
+rond point
+no_enter
+no_entry
+no_parking
+no_stop
+no_uturn
+park_edilmez
+parking
+pedestrian
+pstk
+red
+regulatory_No_u-turn
+round
+speed_limit_100
+speed_limit_100_ar
+speed_limit_120
+speed_limit_120_ar
+speed_limit_15
+speed_limit_20
+speed_limit_20_en
+speed_limit_30
+speed_limit_30_ar
+speed_limit_30_en
+speed_limit_40
+speed_limit_40_en
+speed_limit_5
+speed_limit_50
+speed_limit_50_ar
+speed_limit_60
+speed_limit_60_ar
+speed_limit_70
+speed_limit_70_ar
+speed_limit_80
+speed_limit_80_ar
+speed_limit_90
+speed_limit_90_ar
 speedlimit
 stop
-traffic_signrotation
-trafficlight
+traffic_sign_90
+u_turn
+yellow
+yellow_light

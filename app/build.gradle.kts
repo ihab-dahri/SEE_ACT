@@ -42,13 +42,13 @@ android {
     }
 
 
-        aaptOptions {
-            noCompress("tflite")
-        }
+    androidResources {
+        noCompress += "tflite"
     }
-
+}
 
 dependencies {
+    implementation("org.tensorflow:tensorflow-lite-gpu:2.16.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

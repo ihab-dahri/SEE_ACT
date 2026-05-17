@@ -2,7 +2,6 @@ package com.example.projet_m1
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import com.example.projet_m1.ml.Model
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.FileUtil
@@ -13,28 +12,46 @@ import java.nio.ByteOrder
 class SignDetector(private val context: Context) {
 
     private val inputSize = 640
-    private val numClasses = 41
+    private val numClasses = 64
     private val numBoxes = 8400
     private var labels: List<String>
 
+    // 1. On déclare le modèle ici pour qu'il reste en mémoire
+    // 1. Déclaration en haut
+    private var model: Model
+
     init {
         labels = FileUtil.loadLabels(context, "labels.txt")
+
+        // On écrit les chemins COMPLETS pour forcer Android Studio à comprendre
+        val options = org.tensorflow.lite.support.model.Model.Options.Builder()
+            .setNumThreads(4)
+            .build()
+
+        model = Model.newInstance(context, options)
     }
 
     fun detect(bitmap: Bitmap): List<DetectionResult> {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, false)
         val byteBuffer = convertBitmapToByteBuffer(resizedBitmap)
 
-        val model = Model.newInstance(context)
+        // (On ne crée plus le modèle ici)
+
         val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 640, 640, 3), DataType.FLOAT32)
         inputFeature0.loadBuffer(byteBuffer)
 
+        // Inférence immédiate
         val outputs = model.process(inputFeature0)
         val outputArray = outputs.outputFeature0AsTensorBuffer.floatArray
 
-        model.close()
+        // (On ne fait surtout pas model.close() ici, sinon on le tue pour l'image suivante !)
 
         return parseResults(outputArray)
+    }
+
+    // N'oublie pas d'ajouter cette fonction pour fermer proprement le modèle quand on quitte l'appli
+    fun close() {
+        model.close()
     }
 
     private fun convertBitmapToByteBuffer(bitmap: Bitmap): ByteBuffer {
@@ -90,7 +107,7 @@ class SignDetector(private val context: Context) {
 
                 results.add(DetectionResult(
                     left, top, right, bottom,
-                    labelName, // On passe le nom ici
+                    labelName,
                     (maxClassConfidence * 100).toInt()
                 ))
             }
@@ -99,12 +116,12 @@ class SignDetector(private val context: Context) {
     }
 }
 
-// Vérifie que ta data class ressemble à ça :
+// Classe de données pour structurer le résultat
 data class DetectionResult(
     val left: Float,
     val top: Float,
     val right: Float,
     val bottom: Float,
-    val label: String, // Doit être présent
+    val label: String,
     val score: Int
 )
