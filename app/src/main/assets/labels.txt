@@ -23,7 +23,7 @@ green
 rond point
 no_enter
 no_entry
-no_parking
+no_stopping_waiting
 no_stop
 no_uturn
 park_edilmez

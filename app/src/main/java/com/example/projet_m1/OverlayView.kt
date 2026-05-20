@@ -26,20 +26,27 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
     fun setResults(newResults: List<DetectionResult>) {
         this.results = newResults
-        postInvalidate() // Rafraîchissement sécurisé depuis n'importe quel thread
+        postInvalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
         for (result in results) {
-            // Dans OverlayView.kt
             val left = result.left * width
             val top = result.top * height
             val right = result.right * width
             val bottom = result.bottom * height
+
+            // Formatage de la distance (ex: "15.2 m")
+            val distanceFormatee = String.format("%.1f", result.distance)
+
+            // Le texte final combine Label + Score + Distance
+            val textToDraw = "${result.label} ${result.score}% - $distanceFormatee m"
+
             canvas.drawRect(left, top, right, bottom, boxPaint)
-            canvas.drawText("${result.label} ${result.score}%", left, if (top < 60f) top + 60f else top - 15f, textPaint)
+            // On affiche le texte juste au-dessus du rectangle (ou en dessous s'il touche le haut de l'écran)
+            canvas.drawText(textToDraw, left, if (top < 60f) top + 60f else top - 15f, textPaint)
         }
     }
 }
