@@ -1,64 +1,47 @@
-20 limit
-crosswalk sign
-120KPH
-14
-3
-7
-8
-80KPH
-Danger Ahead
-End of Right Road -Go straight-
-Give Way
-Left Sharp Curve
-No Stopping
-No Waiting
-Snow Warning Sign
-Speed Limit 120
-Speed Limit 30
-Traffic Signals Ahead
-danger
-do_not_enter
-do_not_u_turn
-green
-rond point
-no_enter
-no_entry
-no_stopping_waiting
-no_stop
-no_uturn
-park_edilmez
-parking
-pedestrian
-pstk
-red
-regulatory_No_u-turn
-round
-speed_limit_100
-speed_limit_100_ar
-speed_limit_120
-speed_limit_120_ar
-speed_limit_15
-speed_limit_20
-speed_limit_20_en
-speed_limit_30
-speed_limit_30_ar
-speed_limit_30_en
-speed_limit_40
-speed_limit_40_en
-speed_limit_5
-speed_limit_50
-speed_limit_50_ar
-speed_limit_60
-speed_limit_60_ar
-speed_limit_70
-speed_limit_70_ar
-speed_limit_80
-speed_limit_80_ar
-speed_limit_90
-speed_limit_90_ar
-speedlimit
-stop
-traffic_sign_90
-u_turn
-yellow
-yellow_light
+Att-STOP
+Att-cedez le passage
+Att-danger
+Att-eboulement
+Att-intersection ou vous etes prioritaire
+Att-passage animaux sauvages
+Att-passage enfants
+Att-passage pietons
+Att-ralentisseurs
+Att-rond point
+Att-route a double voie
+Att-route glissante
+Att-route prioritaire
+Att-succession de virages
+Att-travaux
+Att-virage a droite
+Att-virage a gauche
+Feu rouge
+Feu vert
+Indic-autoroute
+Indic-circulation a sens unique
+Indic-parking
+Indic-passage pietons
+Indic-station bus
+Inter-arret et stationnement
+Inter-de depasser
+Inter-de faire demi-tour
+Inter-de tourner a droite
+Inter-de tourner a gauche
+Inter-sens
+Inter-stationnement
+Inter-vitesse limitee a -100km-h-
+Inter-vitesse limitee a -120km-h-
+Inter-vitesse limitee a -20km-h-
+Inter-vitesse limitee a -30km-h-
+Inter-vitesse limitee a -40km-h-
+Inter-vitesse limitee a -50km-h-
+Inter-vitesse limitee a -60km-h-
+Inter-vitesse limitee a -80km-h-
+Oblig-continuez a droite
+Oblig-continuez a gauche
+Oblig-continuez tout droit
+Oblig-continuez tout droit ou tournez a droite
+Oblig-continuez tout droit ou tournez a gauche
+Oblig-tournez a droite
+Oblig-tournez a gauche
+Oblig-tournez le rond point

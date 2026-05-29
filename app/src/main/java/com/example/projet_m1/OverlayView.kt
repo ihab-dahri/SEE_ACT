@@ -26,6 +26,8 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
     fun setResults(newResults: List<DetectionResult>) {
         this.results = newResults
+        // Utilise postInvalidate() au lieu de invalidate()
+        // car le résultat vient du thread de la caméra
         postInvalidate()
     }
 
