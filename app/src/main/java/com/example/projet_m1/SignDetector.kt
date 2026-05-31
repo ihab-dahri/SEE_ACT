@@ -7,7 +7,7 @@ import org.tensorflow.lite.support.common.FileUtil
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import com.example.projet_m1.ml.Model // Assure-toi que le nom de ton fichier tflite est bien "Model"
+import com.example.projet_m1.ml.Model
 
 class SignDetector(private val context: Context) {
 
@@ -21,8 +21,18 @@ class SignDetector(private val context: Context) {
     private val defaultRealHeight = 0.65f
     private val defaultThreshold = 0.45f
 
+    // --- DICTIONNAIRE DES SEUILS DYNAMIQUES PAR CLASSE ---
+    private val classThresholds = mapOf(
+        "Att-STOP" to 0.40f,
+        "Feu rouge" to 0.60f,
+        "Feu vert" to 0.60f,
+        "Inter-sens" to 0.35f,
+        "Inter-vitesse limitee a -50km-h-" to 0.30f,
+        "Att-danger" to 0.35f
+        // Tu peux rajouter/modifier des classes ici
+    )
+
     init {
-        // Charge les 47 labels depuis assets/labels.txt
         labels = FileUtil.loadLabels(context, "labels.txt")
         val options = org.tensorflow.lite.support.model.Model.Options.Builder()
             .setNumThreads(4)
@@ -34,7 +44,6 @@ class SignDetector(private val context: Context) {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, inputSize, inputSize, false)
         val byteBuffer = convertBitmapToByteBuffer(resizedBitmap)
 
-        // Initialisation buffer entrée
         val inputFeature0 = TensorBuffer.createFixedSize(intArrayOf(1, 640, 640, 3), DataType.FLOAT32)
         inputFeature0.loadBuffer(byteBuffer)
 
@@ -61,13 +70,16 @@ class SignDetector(private val context: Context) {
     private fun parseResults(output: FloatArray): List<DetectionResult> {
         val results = mutableListOf<DetectionResult>()
 
+        // --- ⚡ LECTURE DU REGLAGE MANUEL UNE SEULE FOIS ---
+        // On cherche le fichier "Settings" et la clé "manual_threshold"
+        val sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val userManualThreshold = sharedPreferences.getFloat("manual_threshold", -1f)
+
         for (i in 0 until numBoxes) {
             var maxClassConfidence = 0f
             var classIndex = -1
 
-            // Analyse des 47 scores de classe
             for (j in 0 until numClasses) {
-                // Le modèle YOLOv8 TFLite exporté a les coordonnées en 0..3 et les scores en 4..50
                 val conf = output[(j + 4) * numBoxes + i]
                 if (conf > maxClassConfidence) {
                     maxClassConfidence = conf
@@ -75,33 +87,49 @@ class SignDetector(private val context: Context) {
                 }
             }
 
-            if (classIndex != -1 && maxClassConfidence > defaultThreshold) {
+            if (classIndex != -1) {
                 val labelName = labels.getOrNull(classIndex) ?: "Inconnu"
 
-                // 1. Extraction des coordonnées brutes (déjà normalisées 0..1)
-                val cx = output[0 * numBoxes + i]
-                val cy = output[1 * numBoxes + i]
-                val w  = output[2 * numBoxes + i]
-                val h  = output[3 * numBoxes + i]
+                // --- 🛡️ LA LOGIQUE DE PRIORITÉ ---
+                val finalThreshold = when {
+                    // 🥇 Priorité 1 : Le réglage manuel du fragment (si différent de -1)
+                    userManualThreshold != -1f -> userManualThreshold
 
-                // 2. Calcul des bords (0.0 à 1.0) - PAS DE DIVISION PAR inputSize ICI
-                val left   = cx - w / 2f
-                val top    = cy - h / 2f
-                val right  = cx + w / 2f
-                val bottom = cy + h / 2f
+                    // 🥈 & 🥉 Priorité 2 et 3 : Seuillage dynamique de la classe + Mode Nuit
+                    else -> {
+                        var threshold = classThresholds[labelName] ?: defaultThreshold
 
-                // 3. Calcul de la distance :
-                // On a besoin de la largeur/hauteur en PIXELS pour la formule
-                val wInPixels = w * inputSize
-                val hInPixels = h * inputSize
-                val distance = (defaultRealHeight * FOCAL_LENGTH) / maxOf(wInPixels, hInPixels)
+                        // Ajustement si mode nuit actif (-10%)
+                        if (MainActivity.isNightModeActive) {
+                            threshold = maxOf(0.15f, threshold - 0.10f)
+                        }
+                        threshold
+                    }
+                }
 
-                results.add(DetectionResult(
-                    left, top, right, bottom,
-                    labelName,
-                    (maxClassConfidence * 100).toInt(),
-                    distance
-                ))
+                // --- ON APPLIQUE LE SEUIL CALCULÉ ---
+                if (maxClassConfidence > finalThreshold) {
+                    val cx = output[0 * numBoxes + i]
+                    val cy = output[1 * numBoxes + i]
+                    val w  = output[2 * numBoxes + i]
+                    val h  = output[3 * numBoxes + i]
+
+                    val left   = cx - w / 2f
+                    val top    = cy - h / 2f
+                    val right  = cx + w / 2f
+                    val bottom = cy + h / 2f
+
+                    val wInPixels = w * inputSize
+                    val hInPixels = h * inputSize
+                    val distance = (defaultRealHeight * FOCAL_LENGTH) / maxOf(wInPixels, hInPixels)
+
+                    results.add(DetectionResult(
+                        left, top, right, bottom,
+                        labelName,
+                        (maxClassConfidence * 100).toInt(),
+                        distance
+                    ))
+                }
             }
         }
         return results.sortedByDescending { it.score }.take(3)

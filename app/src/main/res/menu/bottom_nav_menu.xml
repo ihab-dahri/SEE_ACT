@@ -12,4 +12,8 @@
         android:id="@+id/settingsFragment"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="Réglages" />
+    <item
+        android:id="@+id/imageAnalysisFragment"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="Analyse Photo" />
 </menu>

@@ -20,4 +20,9 @@
         android:name="com.example.projet_m1.HistoryFragment"
         android:label="fragment_history"
         tools:layout="@layout/fragment_history" />
+    <fragment
+        android:id="@+id/imageAnalysisFragment"
+        android:name="com.example.projet_m1.ImageAnalysisFragment"
+        android:label="Analyse Image"
+        tools:layout="@layout/fragment_image_analysis" />
 </navigation>

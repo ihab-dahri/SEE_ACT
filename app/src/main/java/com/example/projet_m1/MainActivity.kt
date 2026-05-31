@@ -22,6 +22,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var detectionAdapter: DetectionAdapter
     private val detectionList = mutableListOf<String>()
 
+    // --- AJOUT : Variables de l'IA et de l'affichage ---
+    lateinit var detector: SignDetector
+    // ---------------------------------------------------
+
     // --- VARIABLES CAPTEUR DE LUMIÈRE ---
     private lateinit var sensorManager: SensorManager
     private var lightSensor: Sensor? = null
@@ -44,6 +48,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // --- AJOUT : Initialisation de l'IA ---
+        detector = SignDetector(this)
+        // --------------------------------------
+
         setupRecyclerView()
         setupNavigation()
 
@@ -62,30 +70,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             if (!isTripActive) {
                 // --- ON DÉMARRE LE TRAJET ---
                 isTripActive = true
-
-                // On remet les compteurs à zéro
                 totalSignsDetected = 0
                 dangerSignsDetected = 0
                 maxSpeedDetected = 0
 
-                // On change le bouton en mode "Arrêt" (Rouge)
                 btnTrip.text = "Fin de trajet"
                 btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#FF3B30")) // Rouge
                 Toast.makeText(this, "Trajet démarré ! Bonne route.", Toast.LENGTH_SHORT).show()
-
             } else {
                 // --- ON TERMINE LE TRAJET ---
                 isTripActive = false
-
-                // On remet le bouton en mode "Démarrer" (Vert)
                 btnTrip.text = "Démarrer le trajet"
                 btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")) // Vert
-
-                // On affiche le popup de bilan !
                 showTripSummary()
             }
         }
-        // ---------------------------------------------
 
         addSignToHistory("Système Prêt")
     }
@@ -102,7 +101,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         super.onPause()
         sensorManager.unregisterListener(this)
     }
-    // ------------------------------------------------------------
+
+    // --- AJOUT : Fermeture propre de l'IA ---
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::detector.isInitialized) {
+            detector.close()
+        }
+    }
+    // ----------------------------------------
 
     private fun setupRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
@@ -118,14 +125,29 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         bottomNavigationView.setupWithNavController(navController)
     }
 
+    // --- AJOUT : La fonction pour que le Fragment puisse récupérer l'IA ---
+    fun getSignDetector(): SignDetector {
+        return detector
+    }
+    // ----------------------------------------------------------------------
+
+    fun getDetectionAdapter(): DetectionAdapter {
+        return detectionAdapter
+    }
+
     fun addSignToHistory(label: String) {
-        // --- 1. MISE À JOUR DES STATISTIQUES (Si le trajet a démarré) ---
         if (isTripActive && label != "Système Prêt") {
             totalSignsDetected++
 
             // Vérification des panneaux de danger
-            val dangerLabels = listOf("Danger Ahead", "danger", "Snow Warning Sign", "Left Sharp Curve", "pedestrian", "crosswalk sign")
-            if (dangerLabels.contains(label)) {
+            val dangerLabels = listOf(
+                "Att-danger",
+                "Att-eboulement",
+                "Att-passage pietons",
+                "Att-travaux",
+                "virage"
+            )
+            if (dangerLabels.contains(label) || label.contains("danger", ignoreCase = true)) {
                 dangerSignsDetected++
             }
 
@@ -137,7 +159,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 }
             }
         }
-        // ----------------------------------------------------------------
 
         runOnUiThread {
             if (::detectionAdapter.isInitialized) {
@@ -147,19 +168,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    fun getDetectionAdapter(): DetectionAdapter {
-        return detectionAdapter
-    }
-
-    // --- FONCTIONS DU BILAN DE TRAJET ---
-
-    // Extrait les chiffres d'un texte (ex: "speed_limit_120" -> 120)
     private fun extractSpeedFromString(label: String): Int {
         val match = Regex("\\d+").find(label)
         return match?.value?.toIntOrNull() ?: 0
     }
 
-    // Affiche le Popup à la fin
     private fun showTripSummary() {
         val summaryText = """
             🚦 Panneaux rencontrés : $totalSignsDetected
@@ -177,22 +190,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             .show()
     }
 
-    // --- LE CERVEAU DU MODE NUIT (Lecture des Lux) ---
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_LIGHT) {
             val lux = event.values[0]
-
-            // Si la lumière est sous 10 Lux, c'est qu'il fait nuit
             val isNightNow = lux < 10.0f
 
-            // Si on change d'état (jour -> nuit, ou nuit -> jour)
             if (isNightNow != isCurrentlyNight) {
                 isCurrentlyNight = isNightNow
-
-                // 1. On met à jour la variable globale pour le SignDetector
                 isNightModeActive = isCurrentlyNight
 
-                // 2. On prévient le conducteur
                 runOnUiThread {
                     if (isCurrentlyNight) {
                         Toast.makeText(this, "🌙 Nuit détectée : Sensibilité IA augmentée", Toast.LENGTH_LONG).show()
@@ -204,7 +210,5 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Obligatoire pour l'interface, on laisse vide
-    }
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
 }
