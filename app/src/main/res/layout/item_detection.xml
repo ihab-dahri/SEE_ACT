@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
 
-        <!-- Bulle décorative Néon -->
+
         <View
             android:id="@+id/indicator"
             android:layout_width="12dp"
@@ -30,7 +30,7 @@
             android:layout_toEndOf="@id/indicator"
             android:orientation="vertical">
 
-            <!-- Texte du Panneau : Blanc Pur et Gras -->
+
             <TextView
                 android:id="@+id/textSignName"
                 android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
                 android:textAllCaps="true"
                 android:letterSpacing="0.05" />
 
-            <!-- Heure : Bleu électrique -->
+
             <TextView
                 android:id="@+id/textTimestamp"
                 android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
                 android:fontFamily="monospace" />
         </LinearLayout>
 
-        <!-- Badge "Live" -->
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

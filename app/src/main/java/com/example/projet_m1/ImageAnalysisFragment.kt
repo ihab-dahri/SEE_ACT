@@ -21,7 +21,7 @@ class ImageAnalysisFragment : Fragment() {
     private lateinit var imageViewResult: ImageView
     private lateinit var textPlaceholder: TextView
 
-    // 1. Lanceur pour choisir une image dans la GALERIE
+
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             val inputStream = requireContext().contentResolver.openInputStream(uri)
@@ -30,7 +30,7 @@ class ImageAnalysisFragment : Fragment() {
         }
     }
 
-    // 2. Lanceur pour prendre une photo rapide avec la CAMÉRA
+
     private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
         if (bitmap != null) {
             analyserImageStatique(bitmap)
@@ -51,7 +51,7 @@ class ImageAnalysisFragment : Fragment() {
         textPlaceholder = view.findViewById(R.id.textPlaceholder)
         val btnSelectImage = view.findViewById<Button>(R.id.btnSelectImage)
 
-        // Afficher la boîte de dialogue au clic
+
         btnSelectImage.setOnClickListener {
             afficherMenuChoixImage()
         }
@@ -64,28 +64,28 @@ class ImageAnalysisFragment : Fragment() {
             .setTitle("Source de l'image")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> takePictureLauncher.launch(null) // Ouvre l'appareil photo
-                    1 -> pickImageLauncher.launch("image/*") // Ouvre la galerie
+                    0 -> takePictureLauncher.launch(null)
+                    1 -> pickImageLauncher.launch("image/*")
                 }
             }
             .show()
     }
 
     private fun analyserImageStatique(bitmapOriginal: Bitmap) {
-        // Cacher le texte "Aucune image sélectionnée"
+
         textPlaceholder.visibility = View.GONE
 
-        // Récupérer le détecteur déjà initialisé dans MainActivity
+
         val detector = (requireActivity() as MainActivity).detector
 
-        // 1. Détecter les panneaux
+
         val resultats = detector.detect(bitmapOriginal)
 
-        // 2. Créer une copie de l'image modifiable pour pouvoir dessiner dessus
+
         val bitmapModifiable = bitmapOriginal.copy(Bitmap.Config.ARGB_8888, true)
         val canvas = Canvas(bitmapModifiable)
 
-        // 3. Préparer les styles de dessin (rectangles et textes)
+
         val boxPaint = Paint().apply {
             color = Color.RED
             style = Paint.Style.STROKE
@@ -93,11 +93,11 @@ class ImageAnalysisFragment : Fragment() {
         }
         val textPaint = Paint().apply {
             color = Color.YELLOW
-            textSize = bitmapModifiable.width / 20f // Taille du texte dynamique selon l'image
+            textSize = bitmapModifiable.width / 20f
             setShadowLayer(5f, 0f, 0f, Color.BLACK)
         }
 
-        // 4. Dessiner les résultats
+
         for (r in resultats) {
             val left = r.left * bitmapModifiable.width
             val top = r.top * bitmapModifiable.height
@@ -108,7 +108,7 @@ class ImageAnalysisFragment : Fragment() {
             canvas.drawText("${r.label} ${r.score}%", left, top - 10f, textPaint)
         }
 
-        // 5. Afficher l'image finale
+
         imageViewResult.setImageBitmap(bitmapModifiable)
     }
 }

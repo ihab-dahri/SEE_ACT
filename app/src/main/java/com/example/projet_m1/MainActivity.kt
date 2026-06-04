@@ -22,53 +22,51 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var detectionAdapter: DetectionAdapter
     private val detectionList = mutableListOf<String>()
 
-    // --- AJOUT : Variables de l'IA et de l'affichage ---
-    lateinit var detector: SignDetector
-    // ---------------------------------------------------
 
-    // --- VARIABLES CAPTEUR DE LUMIÈRE ---
+    lateinit var detector: SignDetector
+
     private lateinit var sensorManager: SensorManager
     private var lightSensor: Sensor? = null
     private var isCurrentlyNight = false
 
-    // --- VARIABLES BILAN DE TRAJET (Data Analytics) ---
+
     private var isTripActive = false
     private var totalSignsDetected = 0
     private var dangerSignsDetected = 0
     private var maxSpeedDetected = 0
-    // --------------------------------------------------
 
-    // Astuce MLOps : Une variable globale pour que l'IA puisse lire l'état de la nuit depuis n'importe où
+
+
     companion object {
         var isNightModeActive = false
     }
-    // ------------------------------------
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // --- AJOUT : Initialisation de l'IA ---
+
         detector = SignDetector(this)
-        // --------------------------------------
+
 
         setupRecyclerView()
         setupNavigation()
 
-        // --- INITIALISATION DU CAPTEUR DE LUMIÈRE ---
+
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         lightSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT)
 
-        // --- GESTION DU BOUTON DE TRAJET DYNAMIQUE ---
+
         val btnTrip = findViewById<Button>(R.id.btnEndTrip)
 
-        // État initial (Bouton Vert)
+
         btnTrip.text = "Démarrer le trajet"
         btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")) // Vert
 
         btnTrip.setOnClickListener {
             if (!isTripActive) {
-                // --- ON DÉMARRE LE TRAJET ---
+
                 isTripActive = true
                 totalSignsDetected = 0
                 dangerSignsDetected = 0
@@ -78,7 +76,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#FF3B30")) // Rouge
                 Toast.makeText(this, "Trajet démarré ! Bonne route.", Toast.LENGTH_SHORT).show()
             } else {
-                // --- ON TERMINE LE TRAJET ---
+
                 isTripActive = false
                 btnTrip.text = "Démarrer le trajet"
                 btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")) // Vert
@@ -89,7 +87,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         addSignToHistory("Système Prêt")
     }
 
-    // --- GESTION DE LA BATTERIE (Allumer/Éteindre le capteur) ---
+
     override fun onResume() {
         super.onResume()
         lightSensor?.let {
@@ -102,14 +100,14 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         sensorManager.unregisterListener(this)
     }
 
-    // --- AJOUT : Fermeture propre de l'IA ---
+
     override fun onDestroy() {
         super.onDestroy()
         if (::detector.isInitialized) {
             detector.close()
         }
     }
-    // ----------------------------------------
+
 
     private fun setupRecyclerView() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewHistory)
@@ -125,11 +123,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         bottomNavigationView.setupWithNavController(navController)
     }
 
-    // --- AJOUT : La fonction pour que le Fragment puisse récupérer l'IA ---
+
     fun getSignDetector(): SignDetector {
         return detector
     }
-    // ----------------------------------------------------------------------
+
 
     fun getDetectionAdapter(): DetectionAdapter {
         return detectionAdapter
@@ -139,7 +137,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (isTripActive && label != "Système Prêt") {
             totalSignsDetected++
 
-            // Vérification des panneaux de danger
+
             val dangerLabels = listOf(
                 "Att-danger",
                 "Att-eboulement",
@@ -151,7 +149,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
                 dangerSignsDetected++
             }
 
-            // Vérification des panneaux de vitesse
+
             if (label.contains("speed", ignoreCase = true) || label.contains("KPH", ignoreCase = true) || label.contains("limit", ignoreCase = true)) {
                 val speed = extractSpeedFromString(label)
                 if (speed > maxSpeedDetected) {
@@ -201,9 +199,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
                 runOnUiThread {
                     if (isCurrentlyNight) {
-                        Toast.makeText(this, "🌙 Nuit détectée : Sensibilité IA augmentée", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Nuit détectée : Sensibilité IA augmentée", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(this, "☀️ Jour détecté : IA en mode normal", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Jour détecté : IA en mode normal", Toast.LENGTH_LONG).show()
                     }
                 }
             }

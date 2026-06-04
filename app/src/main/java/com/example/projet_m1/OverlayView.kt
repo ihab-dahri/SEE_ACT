@@ -26,8 +26,6 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
 
     fun setResults(newResults: List<DetectionResult>) {
         this.results = newResults
-        // Utilise postInvalidate() au lieu de invalidate()
-        // car le résultat vient du thread de la caméra
         postInvalidate()
     }
 
@@ -40,14 +38,14 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
             val right = result.right * width
             val bottom = result.bottom * height
 
-            // Formatage de la distance (ex: "15.2 m")
+
             val distanceFormatee = String.format("%.1f", result.distance)
 
-            // Le texte final combine Label + Score + Distance
+
             val textToDraw = "${result.label} ${result.score}% - $distanceFormatee m"
 
             canvas.drawRect(left, top, right, bottom, boxPaint)
-            // On affiche le texte juste au-dessus du rectangle (ou en dessous s'il touche le haut de l'écran)
+
             canvas.drawText(textToDraw, left, if (top < 60f) top + 60f else top - 15f, textPaint)
         }
     }

@@ -11,16 +11,16 @@ class HistoryFragment : Fragment(R.layout.fragment_history) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. On récupère le RecyclerView de ton nouveau design fragment_history.xml
+
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewFullHistory)
 
-        // 2. On demande l'adapter à la MainActivity
+
         val mainActivity = activity as? MainActivity
 
         mainActivity?.let {
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            // On branche le RecyclerView sur l'unique adapter de l'appli
+
             recyclerView.adapter = it.getDetectionAdapter()
         }
     }

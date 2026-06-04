@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="64dp"/>
 
-    <!-- Le Slider (Curseur) -->
+
     <com.google.android.material.slider.Slider
         android:id="@+id/confidenceSlider"
         android:layout_width="match_parent"

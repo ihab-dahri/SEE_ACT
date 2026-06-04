@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 1. La vidéo en direct de la caméra -->
+
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
@@ -15,8 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 2. LA FAMEUSE VITRE POUR L'IA (C'est ça qui manquait !) -->
-    <!-- Attention : Vérifie que com.example.projet_m1 est bien ton vrai package -->
+
     <com.example.projet_m1.OverlayView
         android:id="@+id/overlayView"
         android:layout_width="match_parent"
@@ -27,7 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 3. Ton petit viseur visuel -->
+
     <ImageView
         android:id="@+id/focus_ring"
         android:layout_width="200dp"

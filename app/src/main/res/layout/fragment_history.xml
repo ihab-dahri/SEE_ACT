@@ -6,7 +6,7 @@
     android:background="#0F111A"
     android:orientation="vertical">
 
-    <!-- Header avec effet de halo -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:fontFamily="sans-serif-condensed-light" />
     </LinearLayout>
 
-    <!-- La liste avec un effet de fondu -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFullHistory"
         android:layout_width="match_parent"

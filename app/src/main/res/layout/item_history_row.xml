@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- 1. Petite icône générique à gauche -->
+
         <ImageView
             android:id="@+id/imageSignIcon"
             android:layout_width="40dp"
@@ -25,7 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <!-- 2. Nom du panneau détecté -->
+
         <TextView
             android:id="@+id/textSignName"
             android:layout_width="0dp"
@@ -39,7 +39,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/textSignScore"/>
 
-        <!-- 3. Heure de la détection (Nouveau !) -->
+
         <TextView
             android:id="@+id/textSignTime"
             android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
             app:layout_constraintStart_toStartOf="@id/textSignName"
             app:layout_constraintTop_toBottomOf="@id/textSignName"/>
 
-        <!-- 4. Score de confiance de l'IA (en vert) -->
+
         <TextView
             android:id="@+id/textSignScore"
             android:layout_width="wrap_content"

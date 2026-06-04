@@ -62,22 +62,22 @@ class ScannerFragment : Fragment() {
         cameraProviderFuture.addListener({
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
-            // 1. Le flux vidéo normal (l'image de la caméra)
+
             val preview = Preview.Builder()
                 .build()
                 .also {
                     it.setSurfaceProvider(viewFinder.surfaceProvider)
                 }
 
-            // 2. Le Cerveau : On initialise notre détecteur d'IA
+
             val signDetector = SignDetector(requireContext())
 
-            // 3. Le Nerf Optique : On crée l'analyseur d'images
+
             val imageAnalyzer = ImageAnalysis.Builder()
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST) // Ne garde que l'image la plus récente
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also {
-                    // On passe la vitre (pour dessiner) ET le détecteur (pour réfléchir)
+
                     it.setAnalyzer(cameraExecutor, SignAnalyzer(overlayView, signDetector))
                 }
 
@@ -86,7 +86,7 @@ class ScannerFragment : Fragment() {
             try {
                 cameraProvider.unbindAll()
 
-                // 4. On attache la vidéo ET l'analyse IA au cycle de vie du fragment
+
                 cameraProvider.bindToLifecycle(
                     viewLifecycleOwner, cameraSelector, preview, imageAnalyzer
                 )

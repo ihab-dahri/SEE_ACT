@@ -17,11 +17,11 @@ class SignDetector(private val context: Context) {
     private var labels: List<String>
     private var model: Model
 
-    private val FOCAL_LENGTH = 1000f
+    private val FOCAL_LENGTH = 600f
     private val defaultRealHeight = 0.65f
     private val defaultThreshold = 0.45f
 
-    // --- DICTIONNAIRE DES SEUILS DYNAMIQUES PAR CLASSE ---
+
     private val classThresholds = mapOf(
         "Att-STOP" to 0.40f,
         "Feu rouge" to 0.60f,
@@ -29,7 +29,7 @@ class SignDetector(private val context: Context) {
         "Inter-sens" to 0.35f,
         "Inter-vitesse limitee a -50km-h-" to 0.30f,
         "Att-danger" to 0.35f
-        // Tu peux rajouter/modifier des classes ici
+
     )
 
     init {
@@ -70,8 +70,7 @@ class SignDetector(private val context: Context) {
     private fun parseResults(output: FloatArray): List<DetectionResult> {
         val results = mutableListOf<DetectionResult>()
 
-        // --- ⚡ LECTURE DU REGLAGE MANUEL UNE SEULE FOIS ---
-        // On cherche le fichier "Settings" et la clé "manual_threshold"
+
         val sharedPreferences = context.getSharedPreferences("Settings", Context.MODE_PRIVATE)
         val userManualThreshold = sharedPreferences.getFloat("manual_threshold", -1f)
 
@@ -90,16 +89,16 @@ class SignDetector(private val context: Context) {
             if (classIndex != -1) {
                 val labelName = labels.getOrNull(classIndex) ?: "Inconnu"
 
-                // --- 🛡️ LA LOGIQUE DE PRIORITÉ ---
+
                 val finalThreshold = when {
-                    // 🥇 Priorité 1 : Le réglage manuel du fragment (si différent de -1)
+
                     userManualThreshold != -1f -> userManualThreshold
 
-                    // 🥈 & 🥉 Priorité 2 et 3 : Seuillage dynamique de la classe + Mode Nuit
+
                     else -> {
                         var threshold = classThresholds[labelName] ?: defaultThreshold
 
-                        // Ajustement si mode nuit actif (-10%)
+
                         if (MainActivity.isNightModeActive) {
                             threshold = maxOf(0.15f, threshold - 0.10f)
                         }
@@ -107,7 +106,7 @@ class SignDetector(private val context: Context) {
                     }
                 }
 
-                // --- ON APPLIQUE LE SEUIL CALCULÉ ---
+
                 if (maxClassConfidence > finalThreshold) {
                     val cx = output[0 * numBoxes + i]
                     val cy = output[1 * numBoxes + i]
