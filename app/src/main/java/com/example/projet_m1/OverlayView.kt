@@ -42,7 +42,7 @@ class OverlayView(context: Context, attrs: AttributeSet?) : View(context, attrs)
             val distanceFormatee = String.format("%.1f", result.distance)
 
 
-            val textToDraw = "${result.label} ${result.score}% - $distanceFormatee m"
+            val textToDraw = "${result.label} ${result.score}% "
 
             canvas.drawRect(left, top, right, bottom, boxPaint)
 

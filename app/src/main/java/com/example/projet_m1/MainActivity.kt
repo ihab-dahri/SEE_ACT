@@ -62,24 +62,28 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
 
         btnTrip.text = "Démarrer le trajet"
-        btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")) // Vert
+        btnTrip.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1E293B"))
+        btnTrip.setTextColor(android.graphics.Color.parseColor("#38BDF8"))
 
         btnTrip.setOnClickListener {
             if (!isTripActive) {
-
                 isTripActive = true
                 totalSignsDetected = 0
                 dangerSignsDetected = 0
                 maxSpeedDetected = 0
 
-                btnTrip.text = "Fin de trajet"
-                btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#FF3B30")) // Rouge
+                btnTrip.text = "Finir le trajet"
+                btnTrip.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#EF4444"))
+                btnTrip.setTextColor(android.graphics.Color.parseColor("#FFFFFF"))
+
                 Toast.makeText(this, "Trajet démarré ! Bonne route.", Toast.LENGTH_SHORT).show()
             } else {
-
                 isTripActive = false
                 btnTrip.text = "Démarrer le trajet"
-                btnTrip.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50")) // Vert
+
+                btnTrip.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1E293B"))
+                btnTrip.setTextColor(android.graphics.Color.parseColor("#38BDF8"))
+
                 showTripSummary()
             }
         }

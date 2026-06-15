@@ -3,22 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0F111A"
+    android:background="#0F172A"
     android:orientation="vertical">
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="32dp"
-        android:background="#161925">
+        android:background="#0F172A">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LOGS"
-            android:textColor="#448AFF"
+            android:text="HISTORIQUE"
+            android:textColor="#38BDF8"
             android:textSize="12sp"
             android:letterSpacing="0.3"
             android:textStyle="bold" />
@@ -27,12 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Timeline"
+            android:text="Temps-Réel"
             android:textColor="#FFFFFF"
             android:textSize="34sp"
             android:fontFamily="sans-serif-condensed-light" />
     </LinearLayout>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFullHistory"
